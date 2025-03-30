@@ -1,4 +1,4 @@
-package com.juraj.composespeedtest
+package com.juraj.speedtest
 
 import org.junit.Test
 

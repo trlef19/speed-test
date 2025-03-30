@@ -1,4 +1,4 @@
-package com.juraj.composespeedtest
+package com.letr.speedtest
 
 class UiState(
     val speed: String = "",
