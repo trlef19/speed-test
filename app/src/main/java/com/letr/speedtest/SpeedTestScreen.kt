@@ -49,6 +49,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -77,7 +78,7 @@ suspend fun startAnimation(animation: Animatable<Float, AnimationVector1D>) {
 
 fun Animatable<Float, AnimationVector1D>.toUiState(maxSpeed: Float) = UiState(
     arcValue = value,
-    speed = "%.1f".format(value * 100),
+    speed = "%.1f".format(maxSpeed),
     ping = if (value > 0.2f) "${(value * 15).roundToInt()} ms" else "-",
     maxSpeed = if (maxSpeed > 0f) "%.1f mbps".format(maxSpeed) else "-",
     inProgress = isRunning
@@ -142,10 +143,12 @@ fun SpeedTestScreen() {
     val coroutineScope = rememberCoroutineScope()
     val animation = remember { Animatable(0f) }
     val maxSpeed = remember { mutableFloatStateOf(0f) }
-    maxSpeed.floatValue = max(maxSpeed.floatValue, animation.value * 100f)
+    val networkspeed = SpeedChecker()
+    //maxSpeed.floatValue = max(maxSpeed.floatValue, animation.value * 100f)
+    //maxSpeed.floatValue = maxSpeed.floatValue
     SpeedTestScreen(animation.toUiState(maxSpeed.floatValue)) {
         coroutineScope.launch {
-            maxSpeed.floatValue = 0f
+            maxSpeed.floatValue = networkspeed.measureDownloadSpeed()
             startAnimation(animation)
         }
     }
